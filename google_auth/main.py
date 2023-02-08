@@ -53,22 +53,6 @@ def test_api_request():
         return None
 
 
-# @app.route('/authorize')
-# def authorize():
-#     print(CLIENT_SECRETS_FILE)
-#     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-#         CLIENT_SECRETS_FILE, scopes=SCOPES)
-
-#     flow.redirect_uri = flask.url_for('oauth2callback', _external=True)
-
-#     authorization_url, state = flow.authorization_url(
-#         access_type='offline',
-#         include_granted_scopes='true')
-
-#     flask.session['state'] = state
-
-#     return flask.redirect(authorization_url)
-
 @app.route('/authorize')
 def authorize():
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
@@ -98,11 +82,9 @@ def oauth2callback():
   
     credentials = flow.credentials
     cred_in_dict = credentials_to_dict(credentials)
-    print('cred_in_dict')
 
     if cred_in_dict.get('client_id') == CLIENT_ID:
         with open('docs/token.json', 'w') as token:
-            print('docs/token.json')
             token.write(credentials.to_json())
     else:
         print(cred_in_dict.get('client_id'))
