@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  nginx:
+    build: ../nginx/
+    ports:
+      - "5000:80"
+    depends_on:
+      - web
+  bot:
+    # image: russianpostman/bot:v2.0
+    build: ../bot/
+    ports:
+      - "80:80"
+    container_name: bot_1
+    restart: always
+    command: python main.py
+    volumes:
+      - token_value:/docs/
+    env_file:
+      - .env
+
+  web:
+    build: ../google_auth/
+    restart: always
+    command: gunicorn --bind 0.0.0.0:5000 wsgi:app 
+    volumes:
+      - token_value:/docs/
+    expose:
+      - 5000
+    depends_on:
+      - bot
+    env_file:
+      - .env
+volumes:
+  token_value:  
+
+    
